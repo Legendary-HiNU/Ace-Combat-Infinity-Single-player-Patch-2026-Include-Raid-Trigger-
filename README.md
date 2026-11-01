@@ -27,10 +27,7 @@ Complete offline single-player patch and mission unlocker for **ACE COMBAT INFIN
 
 * **Extended 15-Minute Match Duration:**
   * Match duration increased from 6 minutes to **15 minutes (900 seconds)**, giving adequate time to destroy all targets and achieve S-Rank solo.
-
-* **Authentic Flight Balance (Vanilla):**
-  * Original weapon damage, authentic homing curves, standard reload cycles, and stock ammo counts for a fair and rewarding single-player experience.
-
+    
 ---
 
 ### 📥 How to Use / Panduan Penggunaan
