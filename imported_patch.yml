@@ -1,0 +1,168 @@
+Version: 1.2
+
+PPU-11c753d6e0dd75f571e961e4f9f6c6500b57e74a:
+  "OPERATION ETERNAL LIBERATION":
+    Games:
+      "OPERATION ETERNAL LIBERATION":
+        NPUB31347: [02.11]
+      "ACE COMBAT INFINITY":
+        NPUB31347: [02.11]
+    Patch:
+      # cb_IsGameInitError
+      - [ be32, 0x00100b20, 0x38600000 ] # li r3, 0
+      # cb_IsGameInitComplete
+      - [ be32, 0x00100a7c, 0x38600001 ] # li r3, 1
+      # cb_IsGameInitOk
+      - [ be32, 0x001006d4, 0x38600001 ] # li r3, 1
+      # cb_IsEndDownloadNews
+      - [ be32, 0x000ffee0, 0x38600001 ] # li r3, 1
+      # DAT_00b9c8b0
+      - [ be32, 0x00b9c8b0, 0x3a2f2f00 ] # https:// -> http://
+      # ToggleDebug2
+      - [ be32, 0x000e19f0, 0x38600001 ] # li r3, 1
+      # IsDebug - enables debug?
+      - [ be32, 0x000e1bb4, 0x38600001 ] # li r3, 1
+      # IsDebug2 - enables debug?
+      - [ be32, 0x000e1a6c, 0x38600001 ] # li r3, 1
+      # SetDebugUIParam
+      - [ be32, 0x000e1190, 0x38600001 ] # li r3, 1
+      # IsEnableTeamDeathMatch
+      - [ be32, 0x000f0cb8, 0x38600001 ] # li r3, 1
+      # IsCampaignAllYouCanPlay
+      - [ be32, 0x00110d80, 0x38600001 ] # li r3, 1
+      # IsCampaignAllYouCanPlayTrue
+      - [ be32, 0x00110cdc, 0x38600001 ] # li r3, 1
+      # GetCampaignMissionClearCount
+      - [ be32, 0x001274c0, 0x42800038 ] # b LAB_001274f8
+      - [ be32, 0x0012750c, 0x60000000 ] # nop
+      - [ be32, 0x00127530, 0x38600008 ] # li r3, 8
+      # IsCampaignFirstStepCleared
+      - [ be32, 0x0012759c, 0x38600001 ] # li r3, 1
+      # IsCampaignCleared - doesn't unlock all campaign missions atm
+      - [ be32, 0x00127640, 0x38600001 ] # li r3, 1
+      # IsFreeFlightUnlocked
+      - [ be32, 0x00115c04, 0x38600001 ] # li r3, 1
+      # Enable extra content
+      - [ be32, 0x001d79d0, 0x38600000 ] # li r3, 0
+      # Set Current Fuel In Memory
+      - [ be32, 0x000b8fa8, 0x38a00003 ] # li  r5, curr_fuel_number
+      - [ be32, 0x000b8fac, 0x90a3000c ] # stw r5, 0xc(r3)
+      # Set Max Fuel In Memory
+      - [ be32, 0x000b8e5c, 0x38800003 ] # li  r4, max_fuel_number
+      - [ be32, 0x000b8e60, 0x9083004c ] # stw r4, 0x4c(r3)
+
+      # === ANTI-CHEAT & AUTO-KICK BYPASS (PERMANENT) ===
+      # 1. Master Anti-Cheat Trigger (0x000435DC) -> li r3, 0; blr
+      - [ be32, 0x000435dc, 0x38600000 ]
+      - [ be32, 0x000435e0, 0x4e800020 ]
+      # 2. ev_cheat HTTP Packet Builder/Sender (0x000221FC) -> li r3, 0; blr
+      - [ be32, 0x000221fc, 0x38600000 ]
+      - [ be32, 0x00022200, 0x4e800020 ]
+
+      # === OFFLINE SOLO SORTIE (1-PLAYER CO-OP/RAID) COMPLETE FIX ===
+      # 1. Room Size = 1 pada Pembuatan Room, Server Log (ev_room_creation), & Change No. of Players:
+      - [ be32, 0x0002060c, 0x3be00001 ] # ev_room_creation: li r31, 1
+      - [ be32, 0x00020610, 0x93e30028 ] # ev_room_creation: stw r31, 40(r3) (0x311620A58 = 1)
+      - [ be32, 0x00020614, 0x38600001 ] # ev_room_creation: li r3, 1 ("nb_player": 1)
+      - [ be32, 0x00098228, 0x39200001 ] # GetMemberSlotNum: li r9, 1
+      - [ be32, 0x0009822c, 0x91230028 ] # GetMemberSlotNum: stw r9, 40(r3) (0x311620A58 = 1)
+      - [ be32, 0x00098234, 0xe8010080 ] # GetMemberSlotNum: ld r0, 128(r1)
+      - [ be32, 0x00098238, 0x38210070 ] # GetMemberSlotNum: addi r1, r1, 112
+      - [ be32, 0x0009823c, 0x48000014 ] # GetMemberSlotNum: b 0x00098250
+      - [ be32, 0x0009ab00, 0x39200001 ] # StartChangePlayerNum: li r9, 1 (ubah jumlah pemain -> 1)
+      - [ be32, 0x0009ab0c, 0x39200001 ] # StartChangePlayerNum (No Bots): li r9, 1
+
+      # 2. Room Lobby Auto-Ready (+0x68c: 1 -> 4 -> 6 & Members ready to sortie: 1/1):
+      - [ be32, 0x000992d8, 0x38600001 ] # GetMemberReadyNum: li r3, 1 (1/1 Ready)
+      - [ be32, 0x000992dc, 0x4e800020 ] # GetMemberReadyNum: blr
+      - [ be32, 0x00094ab4, 0x38600001 ] # HaveAllPlayMembers: li r3, 1
+      - [ be32, 0x00094ab8, 0x4e800020 ] # HaveAllPlayMembers: blr
+      - [ be32, 0x00155218, 0x38600001 ] # IsRoomFullCheck: li r3, 1
+      - [ be32, 0x0015521c, 0x4e800020 ] # IsRoomFullCheck: blr
+      - [ be32, 0x0015587c, 0x480000e8 ] # HostLobbyUpdate: b 0x00155964 (lewati timer fuel check)
+      - [ be32, 0x001559fc, 0x48000150 ] # HostLobbyUpdate: b 0x00155b4c (set state Host = 5 & +0x68c = 6)
+      - [ be32, 0x0009ce80, 0x60000000 ] # DoLobbySortieMenu: nop
+      - [ be32, 0x0009ceac, 0x60000000 ] # DoLobbySortieMenu: nop
+      - [ be32, 0x0009cf14, 0x60000000 ] # GetLobbySortieMenuState: nop (_decidable=true)
+      - [ be32, 0x0009cf6c, 0x4bffffac ] # GetLobbySortieMenuState: b 0x0009cf18
+
+      # 3. Bypass Anti-Solo Check di RoomManager & State 70 Sortie Start (+0x68c: 6 -> 7 -> 8):
+      - [ be32, 0x0071b414, 0x60000000 ] # RoomManager SetReady: nop (bypass cek player_count <= 1)
+      - [ be32, 0x004a2cc4, 0x48000054 ] # State 70 Entry (0x004a2be0): b 0x004a2d18
+      - [ be32, 0x004a2b74, 0x60000000 ] # State 70 Host (0x004a294c): nop
+      - [ be32, 0x004a2b78, 0x60000000 ] # State 70 Host (0x004a294c): nop
+      - [ be32, 0x004a2bb0, 0x38000001 ] # State 70 Host: li r0, 1
+      - [ be32, 0x004a2bb4, 0x900b0018 ] # State 70 Host: stw r0, 24(r11) (set SlotInfo->is_ready = 1)
+      - [ be32, 0x004a2bb8, 0x38800001 ] # State 70 Host: li r4, 1 (StartSortie arg = 1)
+      - [ be32, 0x004a2bbc, 0x48000010 ] # State 70 Host: b 0x004a2bcc (panggil 0x00155d90 -> +0x68c = 7)
+      - [ be32, 0x004a275c, 0x60000000 ] # State 70 Client fallback: nop
+      - [ be32, 0x00156740, 0x38600001 ] # CheckSortieCountdownEnd: li r3, 1
+      - [ be32, 0x00156744, 0x4e800020 ] # CheckSortieCountdownEnd: blr
+      - [ be32, 0x001574a8, 0x39600001 ] # AssignCoopTeams: li r11, 1 (masuk Alpha Team)
+      - [ be32, 0x0015774c, 0x60000000 ] # AssignTeamsAndOpenBriefing: nop (+0x68c = 8)
+
+      # 4. Bypass "Not Enough Players. Match Cancelled." Watchdog (0x003c3ff0 & 0x003bb0c4):
+      - [ be32, 0x003c40d4, 0x60000000 ] # CheckEnoughPlayers (0x003c3ff0): nop (bypass +0x6dc <= 1)
+      - [ be32, 0x003c4164, 0x60000000 ] # CheckEnoughPlayers (0x003c3ff0): nop (bypass member_count <= 1)
+      - [ be32, 0x003c4428, 0x38600001 ] # CheckEnoughPlayers (0x003c3ff0): li r3, 1 (return 1 = OK walau Bravo Team kosong)
+      - [ be32, 0x003bb0c4, 0x38600000 ] # CancelMatchNotEnoughPlayers (0x003bb0c4): li r3, 0 (matikan Error 0x57)
+      - [ be32, 0x003bb0c8, 0x4e800020 ] # CancelMatchNotEnoughPlayers (0x003bb0c4): blr
+
+      # 6. Pre-Flight Sync & Mission Deployment Gates (State 90, 92, 72, 74):
+      - [ be32, 0x00099c0c, 0x38600001 ] # IsAllClientReady: li r3, 1
+      - [ be32, 0x00099c10, 0x4e800020 ] # IsAllClientReady: blr
+      - [ be32, 0x0071f920, 0x38600001 ] # State 90 Sync Gate: li r3, 1
+      - [ be32, 0x0071f924, 0x4e800020 ] # State 90 Sync Gate: blr
+      - [ be32, 0x0071fa28, 0x38600001 ] # State 92 Sync Gate: li r3, 1
+      - [ be32, 0x0071fa2c, 0x4e800020 ] # State 92 Sync Gate: blr
+      - [ be32, 0x003b9a9c, 0x38600001 ] # State 72 Pre-Flight Gate: li r3, 1
+      - [ be32, 0x003b9aa0, 0x4e800020 ] # State 72 Pre-Flight Gate: blr
+      - [ be32, 0x003c3728, 0x48000024 ] # State 74 (0x003C3484): b 0x003c374c
+      - [ be32, 0x003c389c, 0x60000000 ] # State 74 (0x003C3484): nop
+      - [ be32, 0x003c38a8, 0x60000000 ] # State 74 (0x003C3484): nop
+      - [ be32, 0x003c38b0, 0x480001d8 ] # State 74 (0x003C3484): b 0x003c3a88
+
+      # 7. Anti-Cancel & Match Abort Annihilation (Mencegah Kembali ke Lobby Tanpa Merusak Loading):
+      - [ be32, 0x002be2c4, 0x38000000 ] # Cancel Flag Setter (0x002BE2C4): li r0, 0 (is_canceled = 0)
+      - [ be32, 0x002e490c, 0x60000000 ] # Pre-Mission Watchdog: nop (jangan panggil set_canceled)
+      - [ be32, 0x002e66f4, 0x60000000 ] # LoadingScene Peer Timeout: nop (jangan panggil set_canceled)
+      - [ be32, 0x002e8a80, 0x60000000 ] # LoadingScene In-Mission Peer Timeout: nop (jangan panggil set_canceled)
+      - [ be32, 0x002eadac, 0x38600000 ] # Cancel Handler Entry (0x002EADAC): li r3, 0 (Safe return di prologue)
+      - [ be32, 0x002eadb0, 0x4e800020 ] # Cancel Handler Entry (0x002EADAC): blr
+      - [ be32, 0x0001c924, 0x38600000 ] # ev_mission_cancel Root Sender (0x0001C924): li r3, 0 (Safe return di prologue)
+      - [ be32, 0x0001c928, 0x4e800020 ] # ev_mission_cancel Root Sender (0x0001C924): blr
+
+      # 8. In-Mission Loading Synchronization Gates (State 0..9 Sync - Fix 12-Dot Loading Stall):
+      # Case 1 Peer Sync (0x003D0CB4 & 0x003D0CBC):
+      - [ be32, 0x003d0cb4, 0x2b9a0000 ] # Stage Sync 0x3d0a20: cmplwi cr7, r26, 0 (was 1, izinkan solo player)
+      - [ be32, 0x003d0cbc, 0x60000000 ] # Stage Sync 0x3d0a20: nop (bypass ble 0x3d0aa0 failure branch)
+      # Case 5 Peer Sync (0x003D05D4 & 0x003D05DC):
+      - [ be32, 0x003d05d4, 0x2b970000 ] # Final Sync 0x3d03e8: cmplwi cr7, r23, 0 (was 1, izinkan solo player)
+      - [ be32, 0x003d05dc, 0x4bfffe9c ] # Final Sync 0x3d03e8: b 0x003d0478 (unconditional branch to success return r3=1)
+
+      # 9. Extended Mission Match Duration (15 Menit / 900 Detik untuk Solo Co-op & Raid):
+      - [ be32, 0x00daabfc, 0x44610000 ] # Rule 1 Co-op 4P Match Duration: 360.0f -> 900.0f (15 Menit)
+      - [ be32, 0x00daac60, 0x44610000 ] # Rule 2 Co-op 8P Match Duration: 360.0f -> 900.0f (15 Menit)
+      - [ be32, 0x00daaca4, 0x44610000 ] # Rule 3 Naval Match Duration: 360.0f -> 900.0f (15 Menit)
+      - [ be32, 0x00daacbc, 0x44610000 ] # Rule 4 Raid Match Duration: 360.0f -> 900.0f (15 Menit)
+      - [ be32, 0x002a33ac, 0xc3e2eb78 ] # InitStage Timer2 Path A: lfs f31, -0x1488(r2) (900.0f / 15 Menit)
+      - [ be32, 0x002a36f4, 0xc3e2eb78 ] # InitStage Timer2 Path B: lfs f31, -0x1488(r2) (900.0f / 15 Menit)
+      - [ be32, 0x002a33d0, 0x60000000 ] # InitStage Timer2 Sync: nop (force Timer 2 init fallthrough)
+      
+      # 10.Bypass ev_link_dead & DisconnectedFromHost(InGame) Watchdogs:
+      - [ be32, 0x0001f364, 0x4bffffa0 ] # ev_link_dead HTTP Sender: b 0x0001f304 (langsung keluar ke epilogue aman)
+      - [ be32, 0x002e7500, 0x38600000 ] # DisconnectedFromHost(InGame) Handler A: li r3, 0 (Safe return di prologue)
+      - [ be32, 0x002e7504, 0x4e800020 ] # DisconnectedFromHost(InGame) Handler A: blr
+      - [ be32, 0x002e77e8, 0x38600000 ] # DisconnectedFromHost(InGame) Handler B: li r3, 0 (Safe return di prologue)
+      - [ be32, 0x002e77ec, 0x4e800020 ] # DisconnectedFromHost(InGame) Handler B: blr
+      - [ be32, 0x002e7954, 0x38600000 ] # In-Game Link Dead Handler C: li r3, 0 (Safe return di prologue)
+      - [ be32, 0x002e7958, 0x4e800020 ] # In-Game Link Dead Handler C: blr
+      - [ be32, 0x002ea524, 0x38600000 ] # In-Game Link Dead Handler D: li r3, 0 (Safe return di prologue)
+      - [ be32, 0x002ea528, 0x4e800020 ] # In-Game Link Dead Handler D: blr
+      - [ be32, 0x002e8554, 0x60000000 ] # Link Dead Reason 6 Setter: nop (jangan panggil 0x0096e220)
+      - [ be32, 0x002e8584, 0x60000000 ] # Link Dead Flag 0x80 Setter: nop (jangan panggil 0x00314e64)
+      - [ be32, 0x002e86bc, 0x60000000 ] # Link Dead Reason 7 Setter: nop (jangan panggil 0x0096e220)
+      - [ be32, 0x002e86d8, 0x60000000 ] # Link Dead Flag 0x100 Setter: nop (jangan panggil 0x00314e64)
+      - [ be32, 0x002e9b10, 0x480001e8 ] # In-Game Link Watchdog: b 0x002e9cf8 (lewati blok ev_link_dead)
+      - [ be32, 0x002e9c80, 0x60000000 ] # Link Dead Reason 0xB/0xC Setter: nop (jangan panggil 0x0096e220)
+      - [ be32, 0x002e9cbc, 0x60000000 ] # Link Dead Flag 0x200 Setter: nop (jangan panggil 0x00314e64)
