@@ -6,6 +6,8 @@ Complete offline single-player patch and mission unlocker for **ACE COMBAT INFIN
 
 ### 🚀 Key Features
 
+* **There are two options for unlocking all missions: the .exe version or Cheat Engine.**
+* 
 * **Universal Mission & Special Raid Unlocker (`Universal_Raid_Trainer.exe`):**
   * Unlock and select any Co-op stage or Special Raid directly from the room menu.
   * Full access to all Special Raid tiers:
