@@ -7,7 +7,7 @@ Complete offline single-player patch and mission unlocker for **ACE COMBAT INFIN
 ### 🚀 Key Features
 
 * **There are two options for unlocking all missions: the .exe version or Cheat Engine.**
-  * The procedure is the same as usual: connect Cheat Engine to the game Ace Combat Infinity, then click the box until an [X] appears, and click it again until the [X] disappears..
+  * The procedure is the same as usual: connect Cheat Engine to the game Ace Combat Infinity, choose [universal raid] then click the box until an [X] appears, and click it again until the [X] disappears..
 * **Universal Mission & Special Raid Unlocker (`Universal_Raid_Trainer.exe`):**
   * Unlock and select any Co-op stage or Special Raid directly from the room menu.
   * Full access to all Special Raid tiers:
